@@ -102,17 +102,17 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 ## Fase 4: Integração IA
 
 ### 4.1 — Providers de IA
-- [ ] AiProvider (interface)
-- [ ] LocalAiProvider (LiteRT-LM)
-- [ ] RemoteAiProvider (Gemini API)
-- [ ] PromptBuilder
-- [ ] LlmResponseParser
-- [ ] AiProviderSelector
-- [ ] AiModule
+- [x] AiProvider (interface) — 2026-07-17
+- [x] LocalAiProvider (LiteRT-LM) — 2026-07-17
+- [x] RemoteAiProvider (Gemini API) — 2026-07-17
+- [x] PromptBuilder — 2026-07-17
+- [x] LlmResponseParser — 2026-07-17
+- [x] AiProviderSelector — 2026-07-17
+- [x] AiModule — 2026-07-17
 
 ### 4.2 — Use Cases de IA
-- [ ] GenerateTrainingPlanUseCase
-- [ ] RegenerateWorkoutUseCase
+- [x] GenerateTrainingPlanUseCase — 2026-07-17
+- [x] RegenerateWorkoutUseCase — 2026-07-17
 
 ---
 
@@ -171,3 +171,4 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 | 2026-07-17 | 1 | Fundação | Concluído | Configuração de Build, Modelos de Domínio, Banco de Dados (Room 3), Repositórios e DI (Hilt) |
 | 2026-07-17 | 2 | Tema e Navegação | Concluído | Identidade visual dark/pastel, fontes Inter configuradas, animações e rotas do app |
 | 2026-07-17 | 3 | Telas Básicas | Concluído | Local storage / preferences (Room 3 & DataStore), componentes comuns, fluxo de onboarding, telas de perfil, ajustes e catálogo de exercícios |
+| 2026-07-17 | 4 | Integração IA | Concluído | Provedores local (LiteRT-LM) e remoto (Gemini Client), PromptBuilder, LlmResponseParser e Use Cases de geração/regeneração |

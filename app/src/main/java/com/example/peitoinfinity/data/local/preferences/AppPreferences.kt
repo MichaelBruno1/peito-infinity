@@ -8,7 +8,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.peitoinfinity.domain.model.AiMode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "peito_infinity_preferences")
 
@@ -28,6 +30,12 @@ class AppPreferences(private val context: Context) {
     suspend fun setAiMode(mode: AiMode) {
         dataStore.edit { preferences ->
             preferences[KEY_AI_MODE] = mode.name
+        }
+    }
+
+    fun getAiModeSync(): AiMode {
+        return runBlocking {
+            aiMode.first()
         }
     }
 }
