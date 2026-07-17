@@ -1,58 +1,58 @@
 package com.example.peitoinfinity.ui.theme
 
-import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
+private val PeitoInfinityDarkColorScheme = darkColorScheme(
+    primary = PastelBlue,
+    onPrimary = TextOnPrimary,
+    primaryContainer = PastelBlueContainer,
+    onPrimaryContainer = PastelBlue,
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    secondary = PastelPurple,
+    onSecondary = TextOnPrimary,
+    secondaryContainer = PastelPurpleContainer,
+    onSecondaryContainer = PastelPurple,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    tertiary = PastelMint,
+    onTertiary = TextOnPrimary,
+    tertiaryContainer = PastelMintContainer,
+    onTertiaryContainer = PastelMint,
+
+    error = PastelRed,
+    onError = TextOnPrimary,
+    errorContainer = PastelRedContainer,
+    onErrorContainer = PastelRed,
+
+    background = DarkBackground,
+    onBackground = TextPrimary,
+
+    surface = DarkSurface,
+    onSurface = TextPrimary,
+    surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = TextSecondary,
+
+    outline = Color(0xFF3A3F52),
+    outlineVariant = Color(0xFF2A2E3E),
+    inverseSurface = Color(0xFFE8EAF0),
+    inverseOnSurface = DarkBackground,
+    inversePrimary = PastelBlueDark,
+    surfaceTint = PastelBlue
 )
 
 @Composable
 fun PeitoInfinityTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    // Sempre dark - sem opção de tema claro e sem cores dinâmicas
+    val colorScheme = PeitoInfinityDarkColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = PeitoTypography,
+        shapes = PeitoShapes,
         content = content
     )
 }
