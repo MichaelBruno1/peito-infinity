@@ -119,16 +119,16 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 ## Fase 5: Telas de Plano e Treino
 
 ### 5.1 — Plano de Treino
-- [ ] TrainingPlanViewModel
-- [ ] TrainingPlanScreen
-- [ ] PlanDayDetailViewModel
-- [ ] PlanDayDetailScreen
+- [x] TrainingPlanViewModel — 2026-07-17
+- [x] TrainingPlanScreen — 2026-07-17
+- [x] PlanDayDetailViewModel — 2026-07-17
+- [x] PlanDayDetailScreen — 2026-07-17
 
 ### 5.2 — Treino (Workout)
-- [ ] WorkoutViewModel
-- [ ] WorkoutScreen
-- [ ] Registro de musculação
-- [ ] Registro de cardio
+- [x] WorkoutViewModel — 2026-07-17
+- [x] WorkoutScreen — 2026-07-17
+- [x] Registro de musculação — 2026-07-17
+- [x] Registro de cardio — 2026-07-17
 
 ---
 
@@ -172,3 +172,4 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 | 2026-07-17 | 2 | Tema e Navegação | Concluído | Identidade visual dark/pastel, fontes Inter configuradas, animações e rotas do app |
 | 2026-07-17 | 3 | Telas Básicas | Concluído | Local storage / preferences (Room 3 & DataStore), componentes comuns, fluxo de onboarding, telas de perfil, ajustes e catálogo de exercícios |
 | 2026-07-17 | 4 | Integração IA | Concluído | Provedores local (LiteRT-LM) e remoto (Gemini Client), PromptBuilder, LlmResponseParser e Use Cases de geração/regeneração |
+| 2026-07-17 | 5 | Telas Plano e Treino | Concluído | TrainingPlanViewModel/Screen, PlanDayDetailViewModel/Screen, WorkoutViewModel/Screen com timer e registro de séries |

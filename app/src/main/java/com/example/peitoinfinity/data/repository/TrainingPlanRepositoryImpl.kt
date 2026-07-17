@@ -1,5 +1,6 @@
 package com.example.peitoinfinity.data.repository
 
+import com.example.peitoinfinity.data.local.database.dao.ExerciseDao
 import com.example.peitoinfinity.data.local.database.dao.PlanDayDao
 import com.example.peitoinfinity.data.local.database.dao.PlanExerciseDao
 import com.example.peitoinfinity.data.local.database.dao.TrainingPlanDao
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class TrainingPlanRepositoryImpl @Inject constructor(
     private val trainingPlanDao: TrainingPlanDao,
     private val planDayDao: PlanDayDao,
-    private val planExerciseDao: PlanExerciseDao
+    private val planExerciseDao: PlanExerciseDao,
+    private val exerciseDao: ExerciseDao
 ) : TrainingPlanRepository {
 
     override fun getActivePlan(): Flow<TrainingPlan?> {
@@ -61,12 +63,18 @@ class TrainingPlanRepositoryImpl @Inject constructor(
 
     override fun getExercisesForDay(dayId: Long): Flow<List<PlanExercise>> {
         return planExerciseDao.getExercisesForDay(dayId).map { list ->
-            list.map { it.toDomain() }
+            list.map { entity ->
+                val exerciseDetail = exerciseDao.getById(entity.exerciseId)?.toDomain()
+                entity.toDomain(exerciseDetail)
+            }
         }
     }
 
     override suspend fun getExercisesForDaySync(dayId: Long): List<PlanExercise> {
-        return planExerciseDao.getExercisesForDaySync(dayId).map { it.toDomain() }
+        return planExerciseDao.getExercisesForDaySync(dayId).map { entity ->
+            val exerciseDetail = exerciseDao.getById(entity.exerciseId)?.toDomain()
+            entity.toDomain(exerciseDetail)
+        }
     }
 
     override suspend fun insertAndActivate(plan: TrainingPlanEntity): Long {
@@ -133,11 +141,11 @@ fun PlanDayEntity.toDomain(exercises: List<PlanExercise> = emptyList()) = PlanDa
     exercises = exercises
 )
 
-fun PlanExerciseEntity.toDomain() = PlanExercise(
+fun PlanExerciseEntity.toDomain(exercise: Exercise? = null) = PlanExercise(
     id = id,
     planDayId = planDayId,
     exerciseId = exerciseId,
-    exercise = null,
+    exercise = exercise,
     orderIndex = orderIndex,
     sets = sets,
     reps = reps,
