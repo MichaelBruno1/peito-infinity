@@ -83,12 +83,47 @@ fun SettingsScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
+                            } else if (uiState.isLocalModelDownloading) {
+                                Column(modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+                                    LinearProgressIndicator(
+                                        progress = { uiState.downloadProgress },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Baixando modelo: ${(uiState.downloadProgress * 100).toInt()}%",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             } else {
-                                Text(
-                                    text = "🔴 Arquivo do modelo não encontrado",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.error
-                                )
+                                Column(modifier = Modifier.padding(top = 4.dp)) {
+                                    Text(
+                                        text = "🔴 Arquivo do modelo não encontrado",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Button(
+                                        onClick = { viewModel.downloadModel() },
+                                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = "Baixar Modelo Local (~1.4 GB)",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                    uiState.downloadError?.let { err ->
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "Erro: $err",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

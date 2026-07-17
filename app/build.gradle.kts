@@ -38,6 +38,13 @@ android {
             "GEMINI_API_KEY",
             "\"${localProperties.getProperty("GEMINI_API_KEY", "")}\""
         )
+
+        // Modelo do Gemini embutido via BuildConfig, lido do local.properties
+        buildConfigField(
+            "String",
+            "GEMINI_MODEL",
+            "\"${localProperties.getProperty("GEMINI_MODEL", "gemini-2.0-flash")}\""
+        )
     }
 
     buildTypes {

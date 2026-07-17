@@ -21,6 +21,10 @@ class LocalAiProvider @Inject constructor(
 
     private var engine: Engine? = null
 
+    fun getModelFile(): File {
+        return File(File(context.filesDir, "models"), "gemma-4-E2B-it.litertlm")
+    }
+
     private suspend fun initEngine() {
         if (engine != null) return
         withContext(Dispatchers.IO) {
@@ -29,8 +33,7 @@ class LocalAiProvider @Inject constructor(
             if (!modelFile.exists() || modelFile.length() == 0L) {
                 throw java.io.FileNotFoundException(
                     "Modelo local não encontrado no caminho: $modelPath. " +
-                    "Certifique-se de copiar o arquivo do modelo (.literlm) " +
-                    "para a pasta 'models' no dispositivo, ou altere para o 'Modelo Externo' nas configurações do app."
+                    "Por favor, faça o download do modelo nas configurações do app (Ajustes) ou selecione o 'Modelo Externo' para usar via internet."
                 )
             }
             val config = EngineConfig(

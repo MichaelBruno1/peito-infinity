@@ -17,7 +17,7 @@ class RemoteAiProvider @Inject constructor() : AiProvider {
     override suspend fun generate(prompt: String): Result<String> {
         return try {
             val response = client.models.generateContent(
-                model = "gemini-2.0-flash",
+                model = BuildConfig.GEMINI_MODEL,
                 text = prompt
             )
             Result.success(response.text ?: "")
@@ -28,7 +28,7 @@ class RemoteAiProvider @Inject constructor() : AiProvider {
 
     override fun generateStream(prompt: String): Flow<String> {
         return client.models.generateContentStream(
-            model = "gemini-2.0-flash",
+            model = BuildConfig.GEMINI_MODEL,
             text = prompt
         ).map { it.text ?: "" }
          .flowOn(Dispatchers.IO)
