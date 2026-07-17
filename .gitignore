@@ -1,0 +1,90 @@
+# ==========================
+# Android / Gradle
+# ==========================
+*.iml
+.gradle/
+/build/
+/app/build/
+/captures
+.externalNativeBuild/
+.cxx/
+
+# Gradle wrapper (optional — remove if you want to track wrapper jar)
+# gradle/wrapper/gradle-wrapper.jar
+
+# ==========================
+# Local Properties
+# ==========================
+local.properties
+keystore.properties
+
+# ==========================
+# IDE — Android Studio / IntelliJ
+# ==========================
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries/
+.idea/vcs.xml
+.idea/gradle.xml
+.idea/misc.xml
+*.iws
+
+# ==========================
+# OS Generated Files
+# ==========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==========================
+# Kotlin / KSP
+# ==========================
+*.kotlin_metadata
+
+# ==========================
+# Signing Keys
+# ==========================
+*.jks
+*.keystore
+!debug.keystore
+
+# ==========================
+# AI / LLM Model Files
+# ==========================
+# LiteRT-LM model files (very large, should not be in repo)
+*.litertlm
+*.tflite
+*.gguf
+*.bin
+models/
+
+# ==========================
+# API Keys & Secrets
+# ==========================
+secrets.properties
+apikeys.properties
+app/src/main/assets/api_config.json
+
+# ==========================
+# Testing
+# ==========================
+/app/build/reports/
+/app/build/test-results/
+
+# ==========================
+# Misc
+# ==========================
+*.log
+*.tmp
+*.bak
+*.swp
+*~
