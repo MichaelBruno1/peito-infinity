@@ -54,48 +54,48 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 ## Fase 2: Tema e Navegação
 
 ### 2.1 — Design System
-- [ ] Color.kt
-- [ ] Type.kt
-- [ ] Shape.kt
-- [ ] Theme.kt
-- [ ] Constants.kt
+- [x] Color.kt — 2026-07-17
+- [x] Type.kt — 2026-07-17
+- [x] Shape.kt — 2026-07-17
+- [x] Theme.kt — 2026-07-17
+- [x] Constants.kt (Dimens.kt) — 2026-07-17
 
 ### 2.2 — Navegação
-- [ ] Screen.kt (rotas)
-- [ ] NavGraph.kt
-- [ ] PeitoInfinityApp.kt
-- [ ] MainActivity.kt
+- [x] Screen.kt (rotas) — 2026-07-17
+- [x] NavGraph.kt — 2026-07-17
+- [x] PeitoInfinityApp.kt — 2026-07-17
+- [x] MainActivity.kt — 2026-07-17
 
 ---
 
 ## Fase 3: Telas Básicas
 
 ### 3.1 — Componentes Reutilizáveis
-- [ ] PeitoTopBar
-- [ ] PeitoBottomBar
-- [ ] ExerciseCard
-- [ ] PlanDayCard
-- [ ] LoadingIndicator
-- [ ] StatCard
-- [ ] MuscleGroupSelector
-- [ ] ExerciseExclusionDialog
+- [x] PeitoTopBar — 2026-07-17
+- [x] PeitoBottomBar — 2026-07-17
+- [x] ExerciseCard — 2026-07-17
+- [x] PlanDayCard — 2026-07-17
+- [x] LoadingIndicator — 2026-07-17
+- [x] StatCard — 2026-07-17
+- [x] MuscleGroupSelector — 2026-07-17
+- [x] ExerciseExclusionDialog — 2026-07-17
 
 ### 3.2 — Tela de Onboarding
-- [ ] OnboardingViewModel
-- [ ] OnboardingScreen
+- [x] OnboardingViewModel — 2026-07-17
+- [x] OnboardingScreen — 2026-07-17
 
 ### 3.3 — Tela de Perfil
-- [ ] ProfileViewModel
-- [ ] ProfileScreen
+- [x] ProfileViewModel — 2026-07-17
+- [x] ProfileScreen — 2026-07-17
 
 ### 3.4 — Tela de Configurações
-- [ ] AppPreferences
-- [ ] SettingsViewModel
-- [ ] SettingsScreen
+- [x] AppPreferences — 2026-07-17
+- [x] SettingsViewModel — 2026-07-17
+- [x] SettingsScreen — 2026-07-17
 
 ### 3.5 — Tela de Exercícios
-- [ ] ExerciseListViewModel
-- [ ] ExerciseListScreen
+- [x] ExerciseListViewModel — 2026-07-17
+- [x] ExerciseListScreen — 2026-07-17
 
 ---
 
@@ -169,3 +169,5 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 | Data | Fase | Item | Status | Notas |
 |------|------|------|--------|-------|
 | 2026-07-17 | 1 | Fundação | Concluído | Configuração de Build, Modelos de Domínio, Banco de Dados (Room 3), Repositórios e DI (Hilt) |
+| 2026-07-17 | 2 | Tema e Navegação | Concluído | Identidade visual dark/pastel, fontes Inter configuradas, animações e rotas do app |
+| 2026-07-17 | 3 | Telas Básicas | Concluído | Local storage / preferences (Room 3 & DataStore), componentes comuns, fluxo de onboarding, telas de perfil, ajustes e catálogo de exercícios |

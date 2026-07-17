@@ -2,65 +2,188 @@ package com.example.peitoinfinity.presentation.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.peitoinfinity.domain.model.AiMode
+import com.example.peitoinfinity.presentation.components.PeitoTopBar
+import com.example.peitoinfinity.presentation.settings.SettingsViewModel
 import com.example.peitoinfinity.ui.theme.PeitoDimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onEditProfileClick: () -> Unit
+    onEditProfileClick: () -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Configurações",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-            )
+            PeitoTopBar(title = "Ajustes")
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(PeitoDimens.paddingMd),
-            verticalArrangement = Arrangement.spacedBy(PeitoDimens.paddingSm)
+                .padding(PeitoDimens.paddingMd)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(PeitoDimens.paddingMd)
         ) {
+            // Seção Inteligência Artificial
+            Text(
+                text = "Inteligência Artificial",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            
+            Card(
+                shape = MaterialTheme.shapes.large,
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(PeitoDimens.paddingMd)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { viewModel.updateAiMode(AiMode.LOCAL) }
+                            .padding(vertical = 8.dp)
+                    ) {
+                        RadioButton(
+                            selected = uiState.aiMode == AiMode.LOCAL,
+                            onClick = { viewModel.updateAiMode(AiMode.LOCAL) }
+                        )
+                        Spacer(modifier = Modifier.width(PeitoDimens.paddingSm))
+                        Column {
+                            Text(
+                                text = "Modelo Local",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "Roda no dispositivo (sem internet)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { viewModel.updateAiMode(AiMode.REMOTE) }
+                            .padding(vertical = 8.dp)
+                    ) {
+                        RadioButton(
+                            selected = uiState.aiMode == AiMode.REMOTE,
+                            onClick = { viewModel.updateAiMode(AiMode.REMOTE) }
+                        )
+                        Spacer(modifier = Modifier.width(PeitoDimens.paddingSm))
+                        Column {
+                            Text(
+                                text = "Modelo Externo",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "Usa servidor remoto (requer internet)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Seção Perfil
+            Text(
+                text = "Perfil",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onEditProfileClick() },
                 shape = MaterialTheme.shapes.large,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(PeitoDimens.paddingMd),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
+                Column(modifier = Modifier.padding(PeitoDimens.paddingMd)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Editar Perfil",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Ajuste seus dados biométricos e objetivos",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    uiState.userProfile?.let { profile ->
+                        Spacer(modifier = Modifier.height(PeitoDimens.paddingSm))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Spacer(modifier = Modifier.height(PeitoDimens.paddingSm))
+                        
                         Text(
-                            text = "Editar Perfil",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Ajuste seus dados biométricos e objetivos",
+                            text = "Peso: ${profile.weightKg.toInt()} kg  •  Altura: ${profile.heightCm.toInt()} cm",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        Text(
+                            text = "Objetivo: ${profile.trainingGoal.displayName}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            // Seção Sobre
+            Text(
+                text = "Sobre",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            
+            Card(
+                shape = MaterialTheme.shapes.large,
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(PeitoDimens.paddingMd)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "Versão do app", style = MaterialTheme.typography.bodyLarge)
+                        Text(text = "1.0.0", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }

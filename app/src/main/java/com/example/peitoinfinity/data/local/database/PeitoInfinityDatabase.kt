@@ -2,6 +2,7 @@ package com.example.peitoinfinity.data.local.database
 
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
+import androidx.room3.ColumnTypeConverters
 import com.example.peitoinfinity.data.local.database.dao.*
 import com.example.peitoinfinity.data.local.database.entity.*
 
@@ -19,7 +20,7 @@ import com.example.peitoinfinity.data.local.database.entity.*
     version = 1,
     exportSchema = true
 )
-// @TypeConverters(Converters::class)
+@ColumnTypeConverters(Converters::class)
 abstract class PeitoInfinityDatabase : RoomDatabase() {
     abstract fun userProfileDao(): UserProfileDao
     abstract fun exerciseDao(): ExerciseDao

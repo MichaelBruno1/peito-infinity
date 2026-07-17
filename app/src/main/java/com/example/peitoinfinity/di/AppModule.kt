@@ -4,6 +4,7 @@ import com.example.peitoinfinity.data.repository.*
 import com.example.peitoinfinity.domain.repository.*
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -53,4 +54,13 @@ abstract class AppModule {
     abstract fun bindExerciseExclusionRepository(
         impl: ExerciseExclusionRepositoryImpl
     ): ExerciseExclusionRepository
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideAppPreferences(
+            @dagger.hilt.android.qualifiers.ApplicationContext context: android.content.Context
+        ): com.example.peitoinfinity.data.local.preferences.AppPreferences =
+            com.example.peitoinfinity.data.local.preferences.AppPreferences(context)
+    }
 }

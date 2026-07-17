@@ -17,6 +17,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.peitoinfinity.presentation.navigation.NavGraph
 import com.example.peitoinfinity.presentation.navigation.Screen
+import com.example.peitoinfinity.presentation.components.PeitoBottomBar
+import com.example.peitoinfinity.presentation.components.BottomBarItem
 
 @Composable
 fun PeitoInfinityApp() {
@@ -38,39 +40,21 @@ fun PeitoInfinityApp() {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar {
-                    bottomBarScreens.forEach { item ->
-                        val selected = currentRoute == item.route
-                        NavigationBarItem(
-                            selected = selected,
-                            onClick = {
-                                if (currentRoute != item.route) {
-                                    navController.navigate(item.route) {
-                                        // Pop up to the start destination of the graph to
-                                        // avoid building up a large stack of destinations
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        // Avoid multiple copies of the same destination when
-                                        // reselecting the same item
-                                        launchSingleTop = true
-                                        // Restore state when reselecting a previously selected item
-                                        restoreState = true
-                                    }
+                PeitoBottomBar(
+                    items = bottomBarScreens,
+                    currentRoute = currentRoute,
+                    onNavigate = { route ->
+                        if (currentRoute != route) {
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
                                 }
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = item.label
-                                )
-                            },
-                            label = {
-                                Text(text = item.label)
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                        )
+                        }
                     }
-                }
+                )
             }
         },
         modifier = Modifier.fillMaxSize()
@@ -82,9 +66,3 @@ fun PeitoInfinityApp() {
         )
     }
 }
-
-data class BottomBarItem(
-    val label: String,
-    val route: String,
-    val icon: ImageVector
-)
