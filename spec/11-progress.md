@@ -13,40 +13,41 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 ## Fase 1: Fundação
 
 ### 1.1 — Configuração de Build
-- [ ] Atualizar `gradle/libs.versions.toml`
-- [ ] Atualizar `build.gradle.kts` (raiz)
-- [ ] Atualizar `app/build.gradle.kts`
-- [ ] Atualizar `AndroidManifest.xml`
-- [ ] Criar `PeitoInfinityApplication.kt`
-- [ ] Sincronizar Gradle e resolver erros
+- [x] Atualizar `gradle/libs.versions.toml` — 2026-07-17
+- [x] Atualizar `build.gradle.kts` (raiz) — 2026-07-17
+- [x] Atualizar `app/build.gradle.kts` — 2026-07-17
+- [x] Atualizar `AndroidManifest.xml` — 2026-07-17
+- [x] Criar `PeitoInfinityApplication.kt` — 2026-07-17
+- [x] Sincronizar Gradle e resolver erros — 2026-07-17
 
 ### 1.2 — Domain Models e Enums
-- [ ] Criar enums: TrainingGoal, TrainingLevel, MuscleGroup, Equipment, ExerciseType, Difficulty, AiMode
-- [ ] Criar data classes: UserProfile, Exercise, TrainingPlan, PlanDay, PlanExercise, WorkoutSession, ExerciseLog, WeeklyReport
+- [x] Criar enums: TrainingGoal, TrainingLevel, MuscleGroup, Equipment, ExerciseType, Difficulty, AiMode — 2026-07-17
+- [x] Criar data classes: UserProfile, Exercise, TrainingPlan, PlanDay, PlanExercise, WorkoutSession, ExerciseLog, WeeklyReport — 2026-07-17
 
 ### 1.3 — Database (Room 3)
-- [ ] Criar Entities
-- [ ] Criar Converters
-- [ ] Criar DAOs
-- [ ] Criar PeitoInfinityDatabase
-- [ ] Criar ExerciseData (182 exercícios)
-- [ ] Implementar pré-população
+- [x] Criar Entities — 2026-07-17
+- [x] Criar Converters — 2026-07-17
+- [x] Criar DAOs — 2026-07-17
+- [x] Criar PeitoInfinityDatabase — 2026-07-17
+- [x] Criar ExerciseData (182 exercícios) — 2026-07-17
+- [x] Implementar pré-população — 2026-07-17
 
 ### 1.4 — Repository Interfaces
-- [ ] Criar interfaces de repositório
+- [x] Criar interfaces de repositório — 2026-07-17
 
 ### 1.5 — Repository Implementations
-- [ ] UserProfileRepositoryImpl
-- [ ] ExerciseRepositoryImpl
-- [ ] TrainingPlanRepositoryImpl
-- [ ] WorkoutSessionRepositoryImpl
-- [ ] ReportRepositoryImpl
-- [ ] ExerciseExclusionRepositoryImpl
+- [x] UserProfileRepositoryImpl — 2026-07-17
+- [x] ExerciseRepositoryImpl — 2026-07-17
+- [x] TrainingPlanRepositoryImpl — 2026-07-17
+- [x] WorkoutSessionRepositoryImpl — 2026-07-17
+- [x] ReportRepositoryImpl — 2026-07-17
+- [x] ExerciseExclusionRepositoryImpl — 2026-07-17
+- [x] ExerciseLogRepositoryImpl — 2026-07-17
 
 ### 1.6 — Dependency Injection
-- [ ] DatabaseModule
-- [ ] AppModule
-- [ ] Compilar e verificar DI
+- [x] DatabaseModule — 2026-07-17
+- [x] AppModule — 2026-07-17
+- [x] Compilar e verificar DI — 2026-07-17
 
 ---
 
@@ -167,4 +168,4 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 
 | Data | Fase | Item | Status | Notas |
 |------|------|------|--------|-------|
-| — | — | — | — | Implementação não iniciada |
+| 2026-07-17 | 1 | Fundação | Concluído | Configuração de Build, Modelos de Domínio, Banco de Dados (Room 3), Repositórios e DI (Hilt) |
