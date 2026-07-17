@@ -2,6 +2,7 @@ package com.example.peitoinfinity.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.peitoinfinity.data.ai.LocalAiProvider
 import com.example.peitoinfinity.data.local.preferences.AppPreferences
 import com.example.peitoinfinity.domain.model.AiMode
 import com.example.peitoinfinity.domain.model.UserProfile
@@ -25,7 +26,8 @@ data class SettingsUiState(
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val appPreferences: AppPreferences,
-    private val getUserProfileUseCase: GetUserProfileUseCase
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val localAiProvider: LocalAiProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -34,6 +36,14 @@ class SettingsViewModel @Inject constructor(
     init {
         observeSettings()
         observeProfile()
+        checkLocalModelAvailability()
+    }
+
+    private fun checkLocalModelAvailability() {
+        viewModelScope.launch {
+            val available = localAiProvider.isAvailable()
+            _uiState.update { it.copy(isLocalModelAvailable = available) }
+        }
     }
 
     private fun observeSettings() {
@@ -55,6 +65,7 @@ class SettingsViewModel @Inject constructor(
     fun updateAiMode(mode: AiMode) {
         viewModelScope.launch {
             appPreferences.setAiMode(mode)
+            checkLocalModelAvailability()
         }
     }
 }

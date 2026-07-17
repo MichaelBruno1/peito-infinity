@@ -24,8 +24,17 @@ class LocalAiProvider @Inject constructor(
     private suspend fun initEngine() {
         if (engine != null) return
         withContext(Dispatchers.IO) {
+            val modelPath = getModelPath()
+            val modelFile = File(modelPath)
+            if (!modelFile.exists() || modelFile.length() == 0L) {
+                throw java.io.FileNotFoundException(
+                    "Modelo local não encontrado no caminho: $modelPath. " +
+                    "Certifique-se de copiar o arquivo do modelo (.literlm) " +
+                    "para a pasta 'models' no dispositivo, ou altere para o 'Modelo Externo' nas configurações do app."
+                )
+            }
             val config = EngineConfig(
-                modelPath = getModelPath(),
+                modelPath = modelPath,
                 backend = Backend.GPU() // Instanciação da classe GPU
             )
             engine = Engine(config).also { it.initialize() }
@@ -62,7 +71,8 @@ class LocalAiProvider @Inject constructor(
 
     override suspend fun isAvailable(): Boolean {
         return try {
-            val modelFile = File(getModelPath())
+            val path = getModelPath()
+            val modelFile = File(path)
             modelFile.exists() && modelFile.length() > 0
         } catch (e: Exception) {
             false
@@ -70,6 +80,17 @@ class LocalAiProvider @Inject constructor(
     }
 
     private fun getModelPath(): String {
-        return "${context.filesDir}/models/gemma-4-1b.litertlm"
+        val modelsDir = File(context.filesDir, "models")
+        if (!modelsDir.exists()) {
+            modelsDir.mkdirs()
+        }
+        val names = listOf("gemma-4-E2B-it.litertlm", "gemma-4-E2B-it.literlm", "gemma-4-E2B-it.bin")
+        for (name in names) {
+            val file = File(modelsDir, name)
+            if (file.exists() && file.length() > 0) {
+                return file.absolutePath
+            }
+        }
+        return File(modelsDir, "gemma-4-E2B-it.litertlm").absolutePath
     }
 }

@@ -76,6 +76,20 @@ fun SettingsScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            if (uiState.isLocalModelAvailable) {
+                                Text(
+                                    text = "🟢 Modelo de IA local pronto para uso",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Text(
+                                    text = "🔴 Arquivo do modelo não encontrado",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
                     }
                     

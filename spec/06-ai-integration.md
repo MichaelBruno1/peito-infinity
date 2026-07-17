@@ -109,7 +109,7 @@ class LocalAiProvider @Inject constructor(
 
     private fun getModelPath(): String {
         // Modelo armazenado no diretório interno do app
-        return "${context.filesDir}/models/gemma-4-1b.litertlm"
+        return "${context.filesDir}/models/gemma-4-E2B-it.litertlm"
     }
 }
 ```
