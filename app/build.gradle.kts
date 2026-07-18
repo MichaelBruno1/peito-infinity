@@ -43,7 +43,20 @@ android {
         buildConfigField(
             "String",
             "GEMINI_MODEL",
-            "\"${localProperties.getProperty("GEMINI_MODEL", "gemini-2.0-flash")}\""
+            "\"${localProperties.getProperty("GEMINI_MODEL", "gemini-3.1-flash-lite")}\""
+        )
+
+        // Configurações do modelo local lidas do local.properties
+        buildConfigField(
+            "String",
+            "LOCAL_MODEL_NAME",
+            "\"${localProperties.getProperty("LOCAL_MODEL_NAME", "gemma-4-E2B-it-litert-lm")}\""
+        )
+
+        buildConfigField(
+            "String",
+            "LOCAL_MODEL_URL",
+            "\"${localProperties.getProperty("LOCAL_MODEL_URL", "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it_qualcomm_sm8750.litertlm?download=true")}\""
         )
     }
 

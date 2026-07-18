@@ -10,6 +10,9 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
@@ -34,6 +37,8 @@ fun PlanDayDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val allExercises by viewModel.allExercises.collectAsStateWithLifecycle()
+
+    var showAskExclusionsPrompt by remember { mutableStateOf(false) }
 
     if (uiState.isRegenerating) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -69,7 +74,7 @@ fun PlanDayDetailScreen(
                         horizontalArrangement = Arrangement.spacedBy(PeitoDimens.paddingSm)
                     ) {
                         OutlinedButton(
-                            onClick = { viewModel.setShowExclusionDialog(true) },
+                            onClick = { showAskExclusionsPrompt = true },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(PeitoDimens.buttonHeight),
@@ -247,6 +252,35 @@ fun PlanDayDetailScreen(
                     initiallyExcludedIds = uiState.excludedExercises,
                     onDismiss = { viewModel.setShowExclusionDialog(false) },
                     onConfirm = viewModel::regenerateDay
+                )
+            }
+
+            // Alerta opcional para perguntar antes de excluir exercícios na regeneração
+            if (showAskExclusionsPrompt) {
+                AlertDialog(
+                    onDismissRequest = { showAskExclusionsPrompt = false },
+                    title = { Text("Excluir Exercícios?", fontWeight = FontWeight.Bold) },
+                    text = { Text("Gostaria de remover algum exercício que você não gosta antes de regenerar este dia de treino?") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                showAskExclusionsPrompt = false
+                                viewModel.setShowExclusionDialog(true)
+                            }
+                        ) {
+                            Text("Sim")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showAskExclusionsPrompt = false
+                                viewModel.regenerateDay(emptySet())
+                            }
+                        ) {
+                            Text("Não (Regenerar Tudo)")
+                        }
+                    }
                 )
             }
         }

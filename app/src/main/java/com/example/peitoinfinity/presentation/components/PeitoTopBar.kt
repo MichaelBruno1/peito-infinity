@@ -1,9 +1,12 @@
 package com.example.peitoinfinity.presentation.components
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -18,7 +21,8 @@ fun PeitoTopBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
             )
         },
         navigationIcon = navigationIcon,
@@ -30,6 +34,6 @@ fun PeitoTopBar(
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),
         scrollBehavior = scrollBehavior,
-        modifier = modifier
+        modifier = modifier.height(52.dp) // Reduzido de 64.dp padrão para 52.dp (mais compacto)
     )
 }

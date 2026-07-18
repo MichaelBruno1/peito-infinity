@@ -1,6 +1,7 @@
 package com.example.peitoinfinity.data.ai
 
 import android.content.Context
+import com.example.peitoinfinity.BuildConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.Backend
@@ -22,7 +23,7 @@ class LocalAiProvider @Inject constructor(
     private var engine: Engine? = null
 
     fun getModelFile(): File {
-        return File(File(context.filesDir, "models"), "gemma-4-E2B-it.litertlm")
+        return File(File(context.filesDir, "models"), BuildConfig.LOCAL_MODEL_NAME)
     }
 
     private suspend fun initEngine() {
@@ -87,13 +88,19 @@ class LocalAiProvider @Inject constructor(
         if (!modelsDir.exists()) {
             modelsDir.mkdirs()
         }
-        val names = listOf("gemma-4-E2B-it.litertlm", "gemma-4-E2B-it.literlm", "gemma-4-E2B-it.bin")
+        val configName = BuildConfig.LOCAL_MODEL_NAME
+        val baseName = configName.substringBeforeLast(".")
+        val names = listOf(
+            configName,
+            "$baseName.literlm",
+            "$baseName.bin"
+        )
         for (name in names) {
             val file = File(modelsDir, name)
             if (file.exists() && file.length() > 0) {
                 return file.absolutePath
             }
         }
-        return File(modelsDir, "gemma-4-E2B-it.litertlm").absolutePath
+        return File(modelsDir, configName).absolutePath
     }
 }

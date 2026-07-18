@@ -3,6 +3,7 @@ package com.example.peitoinfinity.presentation.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.peitoinfinity.domain.model.Exercise
+import com.example.peitoinfinity.domain.model.MuscleGroup
 import com.example.peitoinfinity.ui.theme.PeitoDimens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,13 +30,17 @@ fun ExerciseExclusionDialog(
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var selectedMuscleGroup by remember { mutableStateOf<MuscleGroup?>(null) }
     val selectedExclusions = remember { mutableStateOf(initiallyExcludedIds) }
 
-    val filteredList = remember(searchQuery, allExercises) {
-        if (searchQuery.isBlank()) {
-            allExercises
-        } else {
-            allExercises.filter { it.name.contains(searchQuery, ignoreCase = true) || it.primaryMuscleGroup.displayName.contains(searchQuery, ignoreCase = true) }
+    val filteredList = remember(searchQuery, selectedMuscleGroup, allExercises) {
+        allExercises.filter { exercise ->
+            val matchesQuery = searchQuery.isBlank() || 
+                    exercise.name.contains(searchQuery, ignoreCase = true) || 
+                    exercise.primaryMuscleGroup.displayName.contains(searchQuery, ignoreCase = true)
+            val matchesMuscle = selectedMuscleGroup == null || 
+                    exercise.primaryMuscleGroup == selectedMuscleGroup
+            matchesQuery && matchesMuscle
         }
     }
 
@@ -78,6 +84,7 @@ fun ExerciseExclusionDialog(
                                 fontWeight = FontWeight.SemiBold
                             )
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                class clearHelper { } // Local class token for debug
                                 TextButton(onClick = { selectedExclusions.value = emptySet() }) {
                                     Text("Limpar")
                                 }
@@ -95,6 +102,7 @@ fun ExerciseExclusionDialog(
                         .padding(paddingValues)
                         .padding(PeitoDimens.paddingMd)
                 ) {
+                    // Pesquisa
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
@@ -103,7 +111,42 @@ fun ExerciseExclusionDialog(
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                         shape = MaterialTheme.shapes.medium
                     )
-                    Spacer(modifier = Modifier.height(PeitoDimens.paddingMd))
+                    
+                    Spacer(modifier = Modifier.height(PeitoDimens.paddingSm))
+
+                    // Listagem/Chips de Filtro por Grupamento Muscular
+                    Text(
+                        text = "Filtrar por Grupo Muscular:",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(vertical = 4.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        item {
+                            FilterChip(
+                                selected = selectedMuscleGroup == null,
+                                onClick = { selectedMuscleGroup = null },
+                                label = { Text("Todos") }
+                            )
+                        }
+                        items(MuscleGroup.values()) { muscle ->
+                            FilterChip(
+                                selected = selectedMuscleGroup == muscle,
+                                onClick = { selectedMuscleGroup = muscle },
+                                label = { Text(muscle.displayName) }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(PeitoDimens.paddingSm))
+
+                    // Lista de Exercícios
                     LazyColumn(
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)

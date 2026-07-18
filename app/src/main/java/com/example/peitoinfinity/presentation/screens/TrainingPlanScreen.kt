@@ -9,6 +9,9 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +41,8 @@ fun TrainingPlanScreen(
     val allExercises by viewModel.allExercises.collectAsStateWithLifecycle()
     val activeSession by viewModel.activeSession.collectAsStateWithLifecycle()
 
+    var showAskExclusionsPrompt by remember { mutableStateOf(false) }
+
     if (uiState.isGenerating) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             LoadingIndicator(messages = listOf(uiState.generationProgress ?: "Processando..."))
@@ -52,7 +57,7 @@ fun TrainingPlanScreen(
         floatingActionButton = {
             if (uiState.activePlan != null) {
                 FloatingActionButton(
-                    onClick = { viewModel.setShowExclusionDialog(true) },
+                    onClick = { showAskExclusionsPrompt = true },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
@@ -97,7 +102,7 @@ fun TrainingPlanScreen(
                     )
                     Spacer(modifier = Modifier.height(32.dp))
                     Button(
-                        onClick = { viewModel.setShowExclusionDialog(true) },
+                        onClick = { showAskExclusionsPrompt = true },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(PeitoDimens.buttonHeight),
@@ -177,6 +182,35 @@ fun TrainingPlanScreen(
                     initiallyExcludedIds = uiState.excludedExercises,
                     onDismiss = { viewModel.setShowExclusionDialog(false) },
                     onConfirm = viewModel::generatePlan
+                )
+            }
+
+            // Alerta opcional para perguntar antes de excluir exercícios
+            if (showAskExclusionsPrompt) {
+                AlertDialog(
+                    onDismissRequest = { showAskExclusionsPrompt = false },
+                    title = { Text("Excluir Exercícios?", fontWeight = FontWeight.Bold) },
+                    text = { Text("Gostaria de remover algum exercício que você não gosta antes de gerar o plano de treinos?") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                showAskExclusionsPrompt = false
+                                viewModel.setShowExclusionDialog(true)
+                            }
+                        ) {
+                            Text("Sim")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showAskExclusionsPrompt = false
+                                viewModel.generatePlan(emptySet())
+                            }
+                        ) {
+                            Text("Não (Gerar Tudo)")
+                        }
+                    }
                 )
             }
 
