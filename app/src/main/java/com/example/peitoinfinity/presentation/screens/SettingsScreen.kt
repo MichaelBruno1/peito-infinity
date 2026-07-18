@@ -1,14 +1,16 @@
 package com.example.peitoinfinity.presentation.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +27,20 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    var showNameDialog by remember { mutableStateOf(false) }
+    var modelNameInput by remember { mutableStateOf("") }
+    var selectedUri by remember { mutableStateOf<android.net.Uri?>(null) }
+
+    val fileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            selectedUri = uri
+            showNameDialog = true
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -160,25 +176,68 @@ fun SettingsScreen(
                                         color = MaterialTheme.colorScheme.error
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    Button(
-                                        onClick = { viewModel.downloadModel() },
-                                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Text(
-                                            text = "Baixar Modelo Local (~1.4 GB)",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            fontWeight = FontWeight.Bold
-                                        )
+                                        Button(
+                                            onClick = { viewModel.downloadModel() },
+                                            modifier = Modifier.weight(1f),
+                                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                                        ) {
+                                            Text(
+                                                text = "Baixar Modelo",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                        OutlinedButton(
+                                            onClick = { fileLauncher.launch("*/*") },
+                                            modifier = Modifier.weight(1f),
+                                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                                        ) {
+                                            Text(
+                                                text = "Escolher Arquivo",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
                                     }
                                     uiState.downloadError?.let { err ->
                                         Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = "Erro: $err",
+                                            text = "Erro download: $err",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.error
                                         )
                                     }
                                 }
+                            }
+
+                            if (uiState.isImporting) {
+                                Spacer(modifier = Modifier.height(PeitoDimens.paddingSm))
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    LinearProgressIndicator(
+                                        progress = { uiState.importProgress },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Importando modelo: ${(uiState.importProgress * 100).toInt()}%",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+
+                            uiState.importError?.let { err ->
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Erro importação: $err",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
                             }
                         }
                     }
@@ -237,5 +296,46 @@ fun SettingsScreen(
                 }
             }
         }
+    }
+
+    if (showNameDialog) {
+        AlertDialog(
+            onDismissRequest = { showNameDialog = false },
+            title = { Text("Nome do Modelo LLM", fontWeight = FontWeight.Bold) },
+            text = {
+                Column {
+                    Text(
+                        text = "Por favor, informe o nome exato do arquivo do modelo para salvá-lo corretamente no projeto.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = modelNameInput,
+                        onValueChange = { modelNameInput = it },
+                        placeholder = { Text("ex: gemma-4-1b.litertlm") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (modelNameInput.isNotBlank() && selectedUri != null) {
+                            viewModel.importModelFile(context, selectedUri!!, modelNameInput.trim())
+                            showNameDialog = false
+                        }
+                    },
+                    enabled = modelNameInput.isNotBlank()
+                ) {
+                    Text("Confirmar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showNameDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }

@@ -1,7 +1,7 @@
 package com.example.peitoinfinity.data.ai
 
 import android.content.Context
-import com.example.peitoinfinity.BuildConfig
+import com.example.peitoinfinity.data.local.preferences.AppPreferences
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.Backend
@@ -17,13 +17,15 @@ import java.lang.StringBuilder
 import javax.inject.Inject
 
 class LocalAiProvider @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val appPreferences: AppPreferences
 ) : AiProvider {
 
     private var engine: Engine? = null
 
     fun getModelFile(): File {
-        return File(File(context.filesDir, "models"), BuildConfig.LOCAL_MODEL_NAME)
+        val modelName = appPreferences.getLocalModelNameSync()
+        return File(File(context.filesDir, "models"), modelName)
     }
 
     private suspend fun initEngine() {
@@ -37,11 +39,30 @@ class LocalAiProvider @Inject constructor(
                     "Por favor, faça o download do modelo nas configurações do app (Ajustes) ou selecione o 'Modelo Externo' para usar via internet."
                 )
             }
-            val config = EngineConfig(
-                modelPath = modelPath,
-                backend = Backend.GPU() // Instanciação da classe GPU
-            )
-            engine = Engine(config).also { it.initialize() }
+            try {
+                // Tenta inicializar com aceleração de GPU primeiro
+                val config = EngineConfig(
+                    modelPath = modelPath,
+                    backend = Backend.GPU()
+                )
+                engine = Engine(config).also { it.initialize() }
+            } catch (gpuException: Exception) {
+                // Se falhar (ex: emuladores ou GPUs incompatíveis), faz fallback automático para CPU
+                try {
+                    val config = EngineConfig(
+                        modelPath = modelPath,
+                        backend = Backend.CPU()
+                    )
+                    engine = Engine(config).also { it.initialize() }
+                } catch (cpuException: Exception) {
+                    // Repassa o erro se ambos falharem (indica formato de arquivo realmente inválido)
+                    throw Exception(
+                        "Falha ao carregar o modelo local (GPU & CPU). Certifique-se de que o arquivo " +
+                        "está no formato LiteRT compatível (.litertlm / .bin) e não está corrompido. Detalhe: ${cpuException.message}",
+                        cpuException
+                    )
+                }
+            }
         }
     }
 
@@ -88,7 +109,7 @@ class LocalAiProvider @Inject constructor(
         if (!modelsDir.exists()) {
             modelsDir.mkdirs()
         }
-        val configName = BuildConfig.LOCAL_MODEL_NAME
+        val configName = appPreferences.getLocalModelNameSync()
         val baseName = configName.substringBeforeLast(".")
         val names = listOf(
             configName,

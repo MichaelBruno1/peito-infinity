@@ -21,8 +21,9 @@ object AiModule {
     @Provides
     @Singleton
     fun provideLocalAiProvider(
-        @ApplicationContext context: Context
-    ): LocalAiProvider = LocalAiProvider(context)
+        @ApplicationContext context: Context,
+        preferences: AppPreferences
+    ): LocalAiProvider = LocalAiProvider(context, preferences)
 
     @Provides
     @Singleton

@@ -1,5 +1,8 @@
 package com.example.peitoinfinity.presentation.settings
 
+import android.content.Context
+import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.peitoinfinity.data.ai.LocalAiProvider
@@ -10,11 +13,14 @@ import com.example.peitoinfinity.domain.model.AiMode
 import com.example.peitoinfinity.domain.model.UserProfile
 import com.example.peitoinfinity.domain.usecase.GetUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 data class SettingsUiState(
@@ -24,7 +30,10 @@ data class SettingsUiState(
     val downloadProgress: Float = 0f,
     val downloadError: String? = null,
     val userProfile: UserProfile? = null,
-    val error: String? = null
+    val error: String? = null,
+    val isImporting: Boolean = false,
+    val importProgress: Float = 0f,
+    val importError: String? = null
 )
 
 @HiltViewModel
@@ -101,6 +110,48 @@ class SettingsViewModel @Inject constructor(
                         ) }
                     }
                 }
+            }
+        }
+    }
+
+    fun importModelFile(context: Context, uri: Uri, modelName: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isImporting = true, importProgress = 0f, importError = null) }
+            try {
+                // Salvar o nome do modelo escolhido nas configurações
+                appPreferences.setLocalModelName(modelName)
+
+                val modelsDir = File(context.filesDir, "models")
+                if (!modelsDir.exists()) {
+                    modelsDir.mkdirs()
+                }
+                val destinationFile = File(modelsDir, modelName)
+
+                withContext(Dispatchers.IO) {
+                    val cursor = context.contentResolver.query(uri, null, null, null, null)
+                    val sizeIndex = cursor?.getColumnIndex(OpenableColumns.SIZE)
+                    cursor?.moveToFirst()
+                    val totalBytes = sizeIndex?.let { cursor.getLong(it) }?.coerceAtLeast(1L) ?: 1L
+                    cursor?.close()
+
+                    context.contentResolver.openInputStream(uri)?.use { input ->
+                        destinationFile.outputStream().use { output ->
+                            val buffer = ByteArray(1024 * 64) // 64kb chunks
+                            var bytesRead: Int
+                            var totalCopied = 0L
+                            while (input.read(buffer).also { bytesRead = it } != -1) {
+                                output.write(buffer, 0, bytesRead)
+                                totalCopied += bytesRead
+                                val progress = totalCopied.toFloat() / totalBytes
+                                _uiState.update { it.copy(importProgress = progress.coerceAtMost(1f)) }
+                            }
+                        }
+                    }
+                }
+
+                _uiState.update { it.copy(isImporting = false, isLocalModelAvailable = true) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isImporting = false, importError = "Erro ao copiar arquivo: ${e.message}") }
             }
         }
     }
