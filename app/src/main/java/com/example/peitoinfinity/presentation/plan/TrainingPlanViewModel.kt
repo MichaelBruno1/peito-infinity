@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.peitoinfinity.domain.model.Exercise
 import com.example.peitoinfinity.domain.model.PlanDay
 import com.example.peitoinfinity.domain.model.TrainingPlan
+import com.example.peitoinfinity.domain.model.WorkoutSession
 import com.example.peitoinfinity.domain.repository.ExerciseExclusionRepository
 import com.example.peitoinfinity.domain.repository.ExerciseRepository
 import com.example.peitoinfinity.domain.repository.TrainingPlanRepository
+import com.example.peitoinfinity.domain.repository.WorkoutSessionRepository
 import com.example.peitoinfinity.domain.usecase.GenerateTrainingPlanUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,13 +34,17 @@ class TrainingPlanViewModel @Inject constructor(
     private val trainingPlanRepository: TrainingPlanRepository,
     private val generateTrainingPlanUseCase: GenerateTrainingPlanUseCase,
     private val exerciseExclusionRepository: ExerciseExclusionRepository,
-    private val exerciseRepository: ExerciseRepository
+    private val exerciseRepository: ExerciseRepository,
+    private val workoutSessionRepository: WorkoutSessionRepository
 ) : ViewModel() {
 
     private val _isGenerating = MutableStateFlow(false)
     private val _showExclusionDialog = MutableStateFlow(false)
     private val _generationProgress = MutableStateFlow<String?>(null)
     private val _error = MutableStateFlow<String?>(null)
+    private val _activeSession = MutableStateFlow<WorkoutSession?>(null)
+
+    val activeSession: StateFlow<WorkoutSession?> = _activeSession.asStateFlow()
 
     private val _exclusions = flow {
         emit(exerciseExclusionRepository.getExcludedIds())
@@ -84,8 +90,33 @@ class TrainingPlanViewModel @Inject constructor(
         initialValue = TrainingPlanUiState()
     )
 
+    init {
+        viewModelScope.launch {
+            val active = workoutSessionRepository.getActiveSessionSync()
+            _activeSession.value = active
+        }
+    }
+
     fun setShowExclusionDialog(show: Boolean) {
         _showExclusionDialog.value = show
+    }
+
+    fun discardActiveSession() {
+        viewModelScope.launch {
+            val session = _activeSession.value
+            if (session != null) {
+                try {
+                    workoutSessionRepository.finishSession(session.id, "Cancelado pelo usuário")
+                } catch (e: Exception) {
+                    _error.value = "Erro ao descartar sessão: ${e.message}"
+                }
+                _activeSession.value = null
+            }
+        }
+    }
+
+    fun dismissActiveSessionDialog() {
+        _activeSession.value = null
     }
 
     fun generatePlan(exclusions: Set<String>) {

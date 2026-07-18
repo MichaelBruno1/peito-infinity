@@ -2,7 +2,7 @@ package com.example.peitoinfinity.presentation.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.peitoinfinity.presentation.components.AnimatedCard
 import com.example.peitoinfinity.presentation.components.ExerciseExclusionDialog
 import com.example.peitoinfinity.presentation.components.LoadingIndicator
 import com.example.peitoinfinity.presentation.components.PeitoTopBar
@@ -155,70 +156,72 @@ fun PlanDayDetailScreen(
                         }
                     }
 
-                    items(uiState.exercises, key = { it.id }) { planExercise ->
-                        val exercise = planExercise.exercise
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                        ) {
-                            Column(modifier = Modifier.padding(PeitoDimens.paddingMd)) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        text = exercise?.name ?: "Exercício",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Spacer(modifier = Modifier.width(PeitoDimens.paddingSm))
-                                    Text(
-                                        text = "${planExercise.sets} × ${planExercise.reps}",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = "Descanso: ${planExercise.restSeconds}s",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    exercise?.equipment?.let { equip ->
+                    itemsIndexed(uiState.exercises, key = { _, planExercise -> planExercise.id }) { index, planExercise ->
+                        AnimatedCard(index = index) {
+                            val exercise = planExercise.exercise
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            ) {
+                                Column(modifier = Modifier.padding(PeitoDimens.paddingMd)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
                                         Text(
-                                            text = "•  Equipamento: ${equip.displayName}",
+                                            text = exercise?.name ?: "Exercício",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Spacer(modifier = Modifier.width(PeitoDimens.paddingSm))
+                                        Text(
+                                            text = "${planExercise.sets} × ${planExercise.reps}",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = "Descanso: ${planExercise.restSeconds}s",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
-                                    }
-                                }
-
-                                planExercise.notes?.let { note ->
-                                    if (note.isNotBlank()) {
-                                        Spacer(modifier = Modifier.height(PeitoDimens.paddingSm))
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.Top,
-                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Info,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(16.dp)
-                                            )
+                                        exercise?.equipment?.let { equip ->
                                             Text(
-                                                text = note,
+                                                text = "•  Equipamento: ${equip.displayName}",
                                                 style = MaterialTheme.typography.bodySmall,
-                                                fontStyle = FontStyle.Italic,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
+                                        }
+                                    }
+
+                                    planExercise.notes?.let { note ->
+                                        if (note.isNotBlank()) {
+                                            Spacer(modifier = Modifier.height(PeitoDimens.paddingSm))
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.Top,
+                                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Info,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                                Text(
+                                                    text = note,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    fontStyle = FontStyle.Italic,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
                                         }
                                     }
                                 }

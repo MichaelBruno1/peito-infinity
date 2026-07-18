@@ -4,7 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.peitoinfinity.domain.model.ExerciseLog
 import com.example.peitoinfinity.domain.model.ExerciseType
+import com.example.peitoinfinity.presentation.components.AnimatedCard
 import com.example.peitoinfinity.presentation.components.LoadingIndicator
 import com.example.peitoinfinity.presentation.components.PeitoTopBar
 import com.example.peitoinfinity.presentation.workout.WorkoutExerciseUi
@@ -159,27 +160,29 @@ fun WorkoutScreen(
                     }
                 }
 
-                items(uiState.exercises, key = { it.planExercise.id }) { itemUi ->
-                    WorkoutExerciseCard(
-                        item = itemUi,
-                        onToggleExpand = { viewModel.toggleExerciseExpanded(itemUi.planExercise.id) },
-                        onValueChange = { weight, reps, speed, duration, distance ->
-                            viewModel.updateInput(itemUi.planExercise.id) {
-                                it.copy(
-                                    weightKg = weight ?: it.weightKg,
-                                    reps = reps ?: it.reps,
-                                    speedKmh = speed ?: it.speedKmh,
-                                    durationMin = duration ?: it.durationMin,
-                                    distanceM = distance ?: it.distanceM
-                                )
-                            }
-                        },
-                        onRegisterSet = {
-                            val isCardio = itemUi.exercise.exerciseType == ExerciseType.CARDIO
-                            viewModel.logSet(itemUi.planExercise.id, itemUi.planExercise.exerciseId, isCardio)
-                        },
-                        onDeleteSet = viewModel::deleteLog
-                    )
+                itemsIndexed(uiState.exercises, key = { _, itemUi -> itemUi.planExercise.id }) { index, itemUi ->
+                    AnimatedCard(index = index) {
+                        WorkoutExerciseCard(
+                            item = itemUi,
+                            onToggleExpand = { viewModel.toggleExerciseExpanded(itemUi.planExercise.id) },
+                            onValueChange = { weight, reps, speed, duration, distance ->
+                                viewModel.updateInput(itemUi.planExercise.id) {
+                                    it.copy(
+                                        weightKg = weight ?: it.weightKg,
+                                        reps = reps ?: it.reps,
+                                        speedKmh = speed ?: it.speedKmh,
+                                        durationMin = duration ?: it.durationMin,
+                                        distanceM = distance ?: it.distanceM
+                                    )
+                                }
+                            },
+                            onRegisterSet = {
+                                val isCardio = itemUi.exercise.exerciseType == ExerciseType.CARDIO
+                                viewModel.logSet(itemUi.planExercise.id, itemUi.planExercise.exerciseId, isCardio)
+                            },
+                            onDeleteSet = viewModel::deleteLog
+                        )
+                    }
                 }
             }
 

@@ -6,11 +6,13 @@ import com.example.peitoinfinity.domain.model.Gender
 import com.example.peitoinfinity.domain.model.TrainingGoal
 import com.example.peitoinfinity.domain.model.TrainingLevel
 import com.example.peitoinfinity.domain.model.UserProfile
+import com.example.peitoinfinity.domain.usecase.GetUserProfileUseCase
 import com.example.peitoinfinity.domain.usecase.SaveUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,11 +34,22 @@ data class OnboardingUiState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val saveUserProfileUseCase: SaveUserProfileUseCase
+    private val saveUserProfileUseCase: SaveUserProfileUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            // Verificar de forma síncrona/primeiro item se o perfil do usuário já está cadastrado
+            val profile = getUserProfileUseCase().firstOrNull()
+            if (profile != null) {
+                _uiState.update { it.copy(isSaved = true) }
+            }
+        }
+    }
 
     fun updateGender(gender: Gender) {
         _uiState.update { it.copy(gender = gender) }

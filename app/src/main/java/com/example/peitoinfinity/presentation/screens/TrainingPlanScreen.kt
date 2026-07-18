@@ -2,7 +2,7 @@ package com.example.peitoinfinity.presentation.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.peitoinfinity.presentation.components.AnimatedCard
 import com.example.peitoinfinity.presentation.components.ExerciseExclusionDialog
 import com.example.peitoinfinity.presentation.components.LoadingIndicator
 import com.example.peitoinfinity.presentation.components.PeitoTopBar
@@ -30,10 +31,12 @@ import java.util.Locale
 @Composable
 fun TrainingPlanScreen(
     onDayClick: (Long) -> Unit,
+    onResumeWorkout: (Long) -> Unit,
     viewModel: TrainingPlanViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val allExercises by viewModel.allExercises.collectAsStateWithLifecycle()
+    val activeSession by viewModel.activeSession.collectAsStateWithLifecycle()
 
     if (uiState.isGenerating) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -146,12 +149,14 @@ fun TrainingPlanScreen(
                         }
                     }
 
-                    items(uiState.planDays, key = { it.id }) { day ->
-                        PlanDayCard(
-                            day = day,
-                            onClick = { onDayClick(day.id) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    itemsIndexed(uiState.planDays, key = { _, day -> day.id }) { index, day ->
+                        AnimatedCard(index = index) {
+                            PlanDayCard(
+                                day = day,
+                                onClick = { onDayClick(day.id) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
@@ -172,6 +177,30 @@ fun TrainingPlanScreen(
                     initiallyExcludedIds = uiState.excludedExercises,
                     onDismiss = { viewModel.setShowExclusionDialog(false) },
                     onConfirm = viewModel::generatePlan
+                )
+            }
+
+            // Dialog para recuperar treino ativo se detectado ao abrir
+            activeSession?.let { session ->
+                AlertDialog(
+                    onDismissRequest = { viewModel.dismissActiveSessionDialog() },
+                    title = { Text("Treino em Andamento", fontWeight = FontWeight.Bold) },
+                    text = { Text("Detectamos que você possui um treino em execução. Deseja continuá-lo de onde parou ou descartá-lo?") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                viewModel.dismissActiveSessionDialog()
+                                onResumeWorkout(session.id)
+                            }
+                        ) {
+                            Text("Continuar Treino")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { viewModel.discardActiveSession() }) {
+                            Text("Descartar")
+                        }
+                    }
                 )
             }
         }

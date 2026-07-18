@@ -149,18 +149,18 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 ## Fase 7: Polish
 
 ### 7.1 — Animações
-- [ ] Transições de tela
-- [ ] Staggered animations
-- [ ] Count-up animation
-- [ ] Expand/collapse
-- [ ] Loading com mensagens
+- [x] Transições de tela — 2026-07-17
+- [x] Staggered animations — 2026-07-17
+- [x] Count-up animation — 2026-07-17
+- [x] Expand/collapse — 2026-07-17
+- [x] Loading com mensagens — 2026-07-17
 
 ### 7.2 — Edge Cases
-- [ ] Sessão ativa ao reabrir
-- [ ] Erro de IA com retry
-- [ ] Modelo local não disponível
-- [ ] Sem internet (modo remoto)
-- [ ] Validação de inputs
+- [x] Sessão ativa ao reabrir — 2026-07-17
+- [x] Erro de IA com retry — 2026-07-17
+- [x] Modelo local não disponível — 2026-07-17
+- [x] Sem internet (modo remoto) — 2026-07-17
+- [x] Validação de inputs — 2026-07-17
 
 ---
 
@@ -174,3 +174,4 @@ O agente codificador deve atualizar este arquivo após completar cada item.
 | 2026-07-17 | 4 | Integração IA | Concluído | Provedores local (LiteRT-LM) e remoto (Gemini Client), PromptBuilder, LlmResponseParser e Use Cases de geração/regeneração |
 | 2026-07-17 | 5 | Telas Plano e Treino | Concluído | TrainingPlanViewModel/Screen, PlanDayDetailViewModel/Screen, WorkoutViewModel/Screen com timer e registro de séries |
 | 2026-07-17 | 6 | Relatórios | Concluído | Use cases de relatórios semanais e de sessões de treino, ReportViewModel, ValueFormatter e ReportScreen com seletor de semana |
+| 2026-07-17 | 7 | Polish | Concluído | Animações staggered, count-up counter, tratamento de edge-cases como recuperação de sessões ativas e bypass de onboarding |

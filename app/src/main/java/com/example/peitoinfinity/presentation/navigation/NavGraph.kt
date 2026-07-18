@@ -44,6 +44,9 @@ fun NavGraph(
             TrainingPlanScreen(
                 onDayClick = { dayId ->
                     navController.navigate(Screen.PlanDayDetail.createRoute(dayId))
+                },
+                onResumeWorkout = { sessionId ->
+                    navController.navigate(Screen.Workout.createRoute(sessionId))
                 }
             )
         }

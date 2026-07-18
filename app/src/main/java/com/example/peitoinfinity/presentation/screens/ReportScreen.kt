@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.peitoinfinity.presentation.components.AnimatedCounter
 import com.example.peitoinfinity.presentation.components.PeitoTopBar
 import com.example.peitoinfinity.presentation.report.ReportViewModel
 import com.example.peitoinfinity.presentation.util.ValueFormatter
@@ -121,42 +122,48 @@ fun ReportScreen(
                     item {
                         StatCard(
                             title = "Tempo Total",
-                            value = ValueFormatter.formatDuration(report.totalTrainingTimeMinutes),
+                            targetValue = report.totalTrainingTimeMinutes.toFloat(),
+                            format = { ValueFormatter.formatDuration(it.toInt()) },
                             icon = "⏱️"
                         )
                     }
                     item {
                         StatCard(
                             title = "Sessões",
-                            value = "${report.sessionsCount}",
+                            targetValue = report.sessionsCount.toFloat(),
+                            format = { it.toInt().toString() },
                             icon = "🏋️"
                         )
                     }
                     item {
                         StatCard(
                             title = "Peso Total",
-                            value = ValueFormatter.formatWeight(report.totalWeightKg),
+                            targetValue = report.totalWeightKg,
+                            format = { ValueFormatter.formatWeight(it) },
                             icon = "💪"
                         )
                     }
                     item {
                         StatCard(
                             title = "Distância",
-                            value = ValueFormatter.formatDistance(report.totalDistanceKm),
+                            targetValue = report.totalDistanceKm,
+                            format = { ValueFormatter.formatDistance(it) },
                             icon = "🏃"
                         )
                     }
                     item {
                         StatCard(
                             title = "Vel. Média",
-                            value = ValueFormatter.formatSpeed(report.averageSpeedKmh),
+                            targetValue = report.averageSpeedKmh,
+                            format = { ValueFormatter.formatSpeed(it) },
                             icon = "⚡"
                         )
                     }
                     item {
                         StatCard(
                             title = "Desc. Médio",
-                            value = ValueFormatter.formatRest(report.averageRestSeconds),
+                            targetValue = report.averageRestSeconds.toFloat(),
+                            format = { ValueFormatter.formatRest(it.toInt()) },
                             icon = "⏳"
                         )
                     }
@@ -169,7 +176,8 @@ fun ReportScreen(
 @Composable
 fun StatCard(
     title: String,
-    value: String,
+    targetValue: Float,
+    format: (Float) -> String,
     icon: String,
     modifier: Modifier = Modifier
 ) {
@@ -200,11 +208,13 @@ fun StatCard(
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+            AnimatedCounter(
+                targetValue = targetValue,
+                format = format,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
             )
         }
     }
