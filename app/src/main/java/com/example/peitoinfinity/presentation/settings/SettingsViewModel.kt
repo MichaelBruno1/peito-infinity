@@ -78,7 +78,7 @@ class SettingsViewModel @Inject constructor(
         val targetFile = localAiProvider.getModelFile()
         viewModelScope.launch {
             _uiState.update { it.copy(isLocalModelDownloading = true, downloadError = null, downloadProgress = 0f) }
-            val url = "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm?download=true"
+            val url = "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it_qualcomm_sm8750.litertlm?download=true"
             modelDownloader.downloadModel(url, targetFile).collect { state ->
                 when (state) {
                     is DownloadState.Started -> {

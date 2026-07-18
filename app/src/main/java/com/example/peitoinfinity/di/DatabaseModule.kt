@@ -40,8 +40,26 @@ object DatabaseModule {
                         attempts++
                     }
                     database?.let { db ->
-                        if (db.exerciseDao().getCount() == 0) {
+                        db.exerciseDao().insertAll(ExerciseData.allExercises)
+                    }
+                }
+            }
+
+            override suspend fun onOpen(connection: SQLiteConnection) {
+                super.onOpen(connection)
+                databaseScope.launch {
+                    var attempts = 0
+                    while (database == null && attempts < 100) {
+                        delay(50)
+                        attempts++
+                    }
+                    database?.let { db ->
+                        try {
+                            val newIds = ExerciseData.allExercises.map { it.id }
                             db.exerciseDao().insertAll(ExerciseData.allExercises)
+                            db.exerciseDao().deleteExcept(newIds)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
                     }
                 }
@@ -54,6 +72,7 @@ object DatabaseModule {
             "peito_infinity_database"
         )
         .addCallback(callback)
+        .fallbackToDestructiveMigration()
         .build().also {
             database = it
         }

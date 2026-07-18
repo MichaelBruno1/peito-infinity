@@ -33,8 +33,11 @@ interface ExerciseDao {
     """)
     fun getAvailableByMuscleGroup(muscleGroup: String): Flow<List<ExerciseEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(exercises: List<ExerciseEntity>)
+
+    @Query("DELETE FROM exercises WHERE id NOT IN (:ids)")
+    suspend fun deleteExcept(ids: List<String>)
 
     @Query("SELECT COUNT(*) FROM exercises")
     suspend fun getCount(): Int

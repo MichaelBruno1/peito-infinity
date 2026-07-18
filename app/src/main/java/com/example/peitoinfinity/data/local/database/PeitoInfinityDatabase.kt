@@ -17,7 +17,7 @@ import com.example.peitoinfinity.data.local.database.entity.*
         ExerciseLogEntity::class,
         ExerciseExclusionEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @ColumnTypeConverters(Converters::class)
