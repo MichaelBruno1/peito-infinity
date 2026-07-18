@@ -38,6 +38,23 @@ fun SettingsScreen(
     ) { uri ->
         if (uri != null) {
             selectedUri = uri
+            
+            // Tenta obter o nome real do arquivo selecionado no celular para preencher o diálogo
+            var displayName = "gemma-4-1b.litertlm"
+            try {
+                val cursor = context.contentResolver.query(uri, null, null, null, null)
+                val nameIndex = cursor?.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                cursor?.moveToFirst()
+                val retrievedName = nameIndex?.let { cursor.getString(it) }
+                if (!retrievedName.isNullOrBlank()) {
+                    displayName = retrievedName
+                }
+                cursor?.close()
+            } catch (e: Exception) {
+                // Fallback silencioso
+            }
+            
+            modelNameInput = displayName
             showNameDialog = true
         }
     }
@@ -305,7 +322,7 @@ fun SettingsScreen(
             text = {
                 Column {
                     Text(
-                        text = "Por favor, informe o nome exato do arquivo do modelo para salvá-lo corretamente no projeto.",
+                        text = "Confirme ou edite o nome do arquivo do modelo para salvá-lo e carregá-lo corretamente no projeto (certifique-se de manter a extensão correta, ex: .litertlm).",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(modifier = Modifier.height(8.dp))

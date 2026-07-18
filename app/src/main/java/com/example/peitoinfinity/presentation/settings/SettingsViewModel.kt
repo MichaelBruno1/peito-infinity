@@ -118,14 +118,23 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isImporting = true, importProgress = 0f, importError = null) }
             try {
-                // Salvar o nome do modelo escolhido nas configurações
-                appPreferences.setLocalModelName(modelName)
+                // Garante que o arquivo tenha extensão suportada no final para evitar o erro de formato na Engine nativa
+                val finalName = if (!modelName.endsWith(".litertlm") && 
+                    !modelName.endsWith(".literlm") && 
+                    !modelName.endsWith(".bin")) {
+                    "$modelName.litertlm"
+                } else {
+                    modelName
+                }
+
+                // Salvar o nome do modelo nas configurações do DataStore
+                appPreferences.setLocalModelName(finalName)
 
                 val modelsDir = File(context.filesDir, "models")
                 if (!modelsDir.exists()) {
                     modelsDir.mkdirs()
                 }
-                val destinationFile = File(modelsDir, modelName)
+                val destinationFile = File(modelsDir, finalName)
 
                 withContext(Dispatchers.IO) {
                     val cursor = context.contentResolver.query(uri, null, null, null, null)
